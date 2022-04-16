@@ -1,0 +1,29 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Dart
+
+on:
+  push:
+    branches: [ master ]  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: dart:stable
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1.3
+        with:
+          sdk: stable
+          
+      - name: Install dependencies
+        run: dart pub get
+      - name: Compile dart
+        run: dart compile exe lib/server.dart -o bootstrap 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bootstrap
+          path: bootstrap

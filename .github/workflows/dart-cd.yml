@@ -1,0 +1,71 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: CD AWS LAMBDA
+
+on:
+  push:
+    branches: [ dev ]  
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1.3
+        with:
+          sdk: stable
+          
+      - name: Install dependencies
+        run: dart pub get
+      - name: Compile dart
+        run: dart compile exe lib/server.dart -o bootstrap 
+        
+      - name: Zip the app
+        run: zip function.zip bootstrap
+        
+      - name: Setup Python
+        uses: actions/setup-python@v2.3.1
+        with:
+          python-version: 3.9.6
+        
+      - name: Setup Enviroments
+        uses: jannekem/run-python-script-action@v1
+        id: setup_env
+        env:
+          SECRETS: ${{ toJson(secrets) }}
+        with:
+          script: |
+            import os
+            import json
+            secrets = json.loads(os.environ['SECRETS'])
+            print(secrets)
+            stage = os.environ['GITHUB_REF_NAME'].upper()
+            set_output('AWS_ACCESS_KEY_ID', secrets[f'AWS_ACCESS_KEY_ID_{stage}'])
+            set_output('AWS_SECRET_ACCESS_KEY', secrets[f'AWS_SECRET_ACCESS_KEY_{stage}'])
+            set_output('S3_BUCKET', secrets[f'S3_BUCKET_{stage}'])
+            set_output('AWS_REGION', secrets[f'AWS_REGION_{stage}'])
+            
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ steps.setup_env.outputs.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ steps.setup_env.outputs.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ steps.setup_env.outputs.AWS_REGION }}
+
+
+      - name: Upload zip on S3 Bucket
+        run: aws s3 cp function.zip s3://${{ steps.setup_env.outputs.S3_BUCKET }}/${{ github.event.repository.name }}/function.zip # HARD CODED
+
+
+    # Atualizar lambda
+      - name: Update Lambda Source Code
+        run: aws lambda update-function-code --function-name ${{ github.event.repository.name }} --s3-bucket ${{ steps.setup_env.outputs.S3_BUCKET }} --s3-key ${{ github.event.repository.name }}/function.zip
+        
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bootstrap
+          path: bootstrap

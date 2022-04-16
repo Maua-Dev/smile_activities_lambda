@@ -47,4 +47,17 @@ class ActivityController {
     }
     return HttpResponse(res.toJson(), statusCode: 200);
   }
+
+  Future<HttpResponse> delete(HttpRequest req) async {
+    if (req.queryStringParameters == null ||
+        req.queryStringParameters?['id'] == null) {
+      return HttpResponse('invalid or empty id', statusCode: 400);
+    }
+    var res =
+        await _activiryRepository.delete(req.queryStringParameters!['id']);
+    if (!res) {
+      return HttpResponse(null, statusCode: 400);
+    }
+    return HttpResponse(null, statusCode: 204);
+  }
 }

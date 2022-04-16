@@ -14,6 +14,9 @@ void main() async {
         if (req.httpMethod == 'PUT') {
           var res = await _controller.update(req);
           return res.toJson();
+        } else if (req.httpMethod == 'DELETE') {
+          var res = await _controller.delete(req);
+          return res.toJson();
         }
         var res = await _controller.create(req);
         return res.toJson();

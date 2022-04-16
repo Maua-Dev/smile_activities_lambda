@@ -47,9 +47,24 @@ class ActivityRepository {
           expressionAttributeValues: value.expressionAttr(),
           expressionAttributeNames: value.expressionAttrNames(),
           returnValues: ReturnValue.allNew);
+      if (output.attributes == null) {
+        return null;
+      }
       return ActivityModel.fromOutput(output.attributes!);
     } catch (e) {
       return null;
+    }
+  }
+
+  Future<bool> delete(String id) async {
+    try {
+      await dynamoClient.deleteItem(
+          tableName: Platform.environment['TABLE_NAME'] ?? 'Activity_Teste',
+          key: {'id': AttributeValue(s: id)},
+          returnValues: ReturnValue.none);
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }

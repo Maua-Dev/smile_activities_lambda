@@ -1,9 +1,7 @@
-import 'package:music_api/model/user.dart';
 import 'package:uuid/uuid.dart';
-import 'package:music_api/model/activity.dart';
-
+import '../model/user.dart';
+import '../model/activity.dart';
 import '../repositories/activity_repository.dart';
-
 import '../utils/http.dart';
 
 class ActivityController {

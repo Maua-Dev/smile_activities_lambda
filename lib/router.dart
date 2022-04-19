@@ -1,4 +1,4 @@
-import 'package:music_api/utils/http.dart';
+import 'utils/http.dart';
 import 'package:http_methods/http_methods.dart';
 
 class Router {

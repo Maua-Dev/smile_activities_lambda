@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:music_api/model/user.dart';
+import '../model/user.dart';
 
 class AuthRepository {
   final _dio = Dio(BaseOptions(

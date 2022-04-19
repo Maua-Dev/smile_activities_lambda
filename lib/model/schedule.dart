@@ -66,6 +66,7 @@ class Schedule {
       'date': date,
       'totalParticipants': totalParticipants,
       'duration': duration,
+      'enrolledUsers': enrolledUsers.length,
       'location': location,
       'link': link,
       'acceptSubscription': acceptSubscription

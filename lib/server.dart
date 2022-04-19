@@ -27,7 +27,7 @@ void main() async {
           var res = await _controller.getAll(req);
           return res.toJson();
         } catch (e) {
-          throw InternalServerError(e);
+          throw InternalServerError(e.toString());
         }
       case ('$defaultPath'):
         try {
@@ -41,16 +41,16 @@ void main() async {
           var res = await _controller.create(req);
           return res.toJson();
         } catch (e) {
-          throw InternalServerError(e);
+          throw InternalServerError(e.toString());
         }
-        
+
       case ('$defaultPath/enroll'):
         var user = await jwtCheck(req);
         try {
           var res = await _controller.enrollUser(req, user);
           return res.toJson();
         } catch (e) {
-          throw InternalServerError(e);
+          throw InternalServerError(e.toString());
         }
       case ('$defaultPath/unenroll'):
         var user = await jwtCheck(req);
@@ -58,7 +58,7 @@ void main() async {
           var res = await _controller.unEnrollUser(req, user);
           return res.toJson();
         } catch (e) {
-          throw InternalServerError(e.message);
+          throw InternalServerError(e.toString());
         }
       case ('$defaultPath/userisenrolled'):
         var user = await jwtCheck(req);
@@ -66,7 +66,7 @@ void main() async {
           var res = await _controller.userEnrolledActivities(req, user);
           return res.toJson();
         } catch (e) {
-          throw InternalServerError(e);
+          throw InternalServerError(e.toString());
         }
       default:
         return HttpResponse(null, statusCode: 404).toJson();
@@ -82,7 +82,7 @@ void main() async {
     } on InternalServerError catch (e) {
       return HttpResponse(e.message, statusCode: 500).toJson();
     } catch (e) {
-      return HttpResponse(e, statusCode: 500).toJson();
+      return HttpResponse(e.toString(), statusCode: 500).toJson();
     }
   };
   Runtime()

@@ -7,7 +7,7 @@ name: CD AWS LAMBDA
 
 on:
   push:
-    branches: [ dev ]  
+    branches: [ dev, prod ]  
 jobs:
   Deploy:
     runs-on: ubuntu-latest

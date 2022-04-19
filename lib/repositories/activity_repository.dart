@@ -76,18 +76,19 @@ class ActivityRepository {
     }
   }
 
-  Future<ActivityModel?> saveEnrollUser(User user, ActivityModel value) async {
+  Future<ActivityModel?> saveEnrollUser(User user, String idActivity,
+      int indexSchedule, List<String> enrolledUsers) async {
     try {
       var output = await dynamoClient.updateItem(
           tableName: Platform.environment['TABLE_NAME'] ?? 'Activity_Teste',
-          key: {'id': AttributeValue(s: value.id)},
-          updateExpression: 'SET #schedule = :val',
-          expressionAttributeNames: {"#schedule": "schedule"},
+          key: {'id': AttributeValue(s: idActivity)},
+          updateExpression: 'SET #enroll = :val',
+          expressionAttributeNames: {
+            "#enroll": "schedule[$indexSchedule].enrolledUsers"
+          },
           expressionAttributeValues: {
             ":val": AttributeValue(
-                l: value.schedule
-                    .map((e) => AttributeValue(m: e.toAttrEnroll()))
-                    .toList())
+                l: enrolledUsers.map((e) => AttributeValue(s: e)).toList())
           },
           returnValues: ReturnValue.allNew);
       if (output.attributes == null) {

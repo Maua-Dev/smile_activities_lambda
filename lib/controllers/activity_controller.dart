@@ -68,14 +68,17 @@ class ActivityController {
     if (act == null) {
       return HttpResponse('Activity not found', statusCode: 400);
     }
-    act.schedule.forEach((element) {
-      if (element.date == req.body!['activityDate'] &&
-          !element.enrolledUsers.contains(user.id)) {
-        element.enrolledUsers.add(user.id);
+    var res = null;
+    for (var i = 0; i < act.schedule.length; i++) {
+      if (act.schedule[i].date == req.body!['activityDate'] &&
+          !act.schedule[i].enrolledUsers.contains(user.id)) {
+        act.schedule[i].enrolledUsers.add(user.id);
+        res = await _activityRepository.saveEnrollUser(
+            user, act.id, act.schedule[i].date, act.schedule[i].enrolledUsers);
+        break;
       }
-    });
+    }
 
-    var res = await _activityRepository.saveEnrollUser(user, act);
     if (res == null) {
       return HttpResponse(null, statusCode: 400);
     }
@@ -90,14 +93,16 @@ class ActivityController {
     if (act == null) {
       return HttpResponse('Activity not found', statusCode: 400);
     }
-    act.schedule.forEach((element) {
-      if (element.date == req.body!['activityDate'] &&
-          element.enrolledUsers.contains(user.id)) {
-        element.enrolledUsers.remove(user.id);
+    var res = null;
+    for (var i = 0; i < act.schedule.length; i++) {
+      if (act.schedule[i].date == req.body!['activityDate'] &&
+          !act.schedule[i].enrolledUsers.contains(user.id)) {
+        act.schedule[i].enrolledUsers.remove(user.id);
+        res = await _activityRepository.saveEnrollUser(
+            user, act.id, act.schedule[i].date, act.schedule[i].enrolledUsers);
+        break;
       }
-    });
-
-    var res = await _activityRepository.saveEnrollUser(user, act);
+    }
     if (res == null) {
       return HttpResponse(null, statusCode: 400);
     }

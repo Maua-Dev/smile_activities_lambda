@@ -42,11 +42,16 @@ class Schedule {
       'date': AttributeValue(n: '$date'),
       'totalParticipants': AttributeValue(n: '$totalParticipants'),
       'duration': AttributeValue(n: '$duration'),
-      'enrolledUsers': AttributeValue(
-          l: enrolledUsers.map((e) => AttributeValue(s: e)).toList()),
       'location': AttributeValue(s: location),
       'link': AttributeValue(s: link),
       'acceptSubscription': AttributeValue(boolValue: acceptSubscription)
+    };
+  }
+
+  Map<String, AttributeValue> toAttrEnroll() {
+    return {
+      'enrolledUsers': AttributeValue(
+          l: enrolledUsers.map((e) => AttributeValue(s: e)).toList()),
     };
   }
 

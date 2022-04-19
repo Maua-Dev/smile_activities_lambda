@@ -48,7 +48,7 @@ jobs:
             set_output('AWS_SECRET_ACCESS_KEY', secrets[f'AWS_SECRET_ACCESS_KEY_{stage}'])
             set_output('S3_BUCKET', secrets[f'S3_BUCKET_{stage}'])
             set_output('AWS_REGION', secrets[f'AWS_REGION_{stage}'])
-            set_output('STAGE', f'-{stage}' if stage == "PROD" else "")
+            set_output('STAGE', f'-{stage}')
             
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1

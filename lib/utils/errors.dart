@@ -8,5 +8,5 @@ class AuthenticationError extends Errors {
 }
 
 class InternalServerError extends Errors {
-  InternalServerError(this.message) : super(message);
+  InternalServerError(String message) : super(message);
 }

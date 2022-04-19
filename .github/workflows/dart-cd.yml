@@ -7,7 +7,7 @@ name: CD AWS LAMBDA
 
 on:
   push:
-    branches: [ dev ]  
+    branches: [ dev, prod ]  
 jobs:
   Deploy:
     runs-on: ubuntu-latest
@@ -48,6 +48,7 @@ jobs:
             set_output('AWS_SECRET_ACCESS_KEY', secrets[f'AWS_SECRET_ACCESS_KEY_{stage}'])
             set_output('S3_BUCKET', secrets[f'S3_BUCKET_{stage}'])
             set_output('AWS_REGION', secrets[f'AWS_REGION_{stage}'])
+            set_output('STAGE', f'-{stage}' if stage == "PROD" else "")
             
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -63,7 +64,7 @@ jobs:
 
     # Atualizar lambda
       - name: Update Lambda Source Code
-        run: aws lambda update-function-code --function-name ${{ github.event.repository.name }} --s3-bucket ${{ steps.setup_env.outputs.S3_BUCKET }} --s3-key ${{ github.event.repository.name }}/function.zip
+        run: aws lambda update-function-code --function-name ${{ github.event.repository.name }}${{ steps.setup_env.outputs.STAGE }} --s3-bucket ${{ steps.setup_env.outputs.S3_BUCKET }} --s3-key ${{ github.event.repository.name }}/function.zip
         
       - uses: actions/upload-artifact@v2
         with:

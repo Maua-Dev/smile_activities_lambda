@@ -1,7 +1,7 @@
 import 'dart:io' show Platform;
 import 'package:aws_dynamodb_api/dynamodb-2012-08-10.dart';
-import 'package:music_api/model/activity.dart';
-import 'package:music_api/model/user.dart';
+import '../model/activity.dart';
+import '../model/user.dart';
 
 class ActivityRepository {
   final dynamoClient = DynamoDB(

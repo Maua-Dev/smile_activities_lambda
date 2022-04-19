@@ -1,6 +1,6 @@
 import 'package:aws_dynamodb_api/dynamodb-2012-08-10.dart';
-import 'package:music_api/model/schedule.dart';
-import 'package:music_api/model/speaker.dart';
+import '../model/schedule.dart';
+import '../model/speaker.dart';
 
 class ActivityModel {
   final String id;

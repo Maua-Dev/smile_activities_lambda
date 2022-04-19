@@ -1,4 +1,4 @@
-name: music_api
+name: smile_activities_lambda
 publish: 'none'
 environment:
   sdk: ">=2.12.0 <3.0.0"

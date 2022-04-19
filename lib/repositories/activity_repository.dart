@@ -1,24 +1,18 @@
 import 'dart:io' show Platform;
 import 'package:aws_dynamodb_api/dynamodb-2012-08-10.dart';
 import 'package:music_api/model/activity.dart';
+import 'package:music_api/model/user.dart';
 
 class ActivityRepository {
-  // final dynamoClient = DynamoDB(
-  //     region: Platform.environment.containsKey('AWS_REGION')
-  //         ? Platform.environment['AWS_REGION']!
-  //         : 'sa-east-1',
-  //     credentials: Platform.environment.containsKey('ENV')
-  //         ? AwsClientCredentials(
-  //             accessKey:
-  //                 Platform.environment['accessKey'] ?? 'AKIA6OSE4M4SAWHPS5GV',
-  //             secretKey: Platform.environment['secretKey'] ??
-  //                 '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')
-  //         : null);
   final dynamoClient = DynamoDB(
-      region: 'sa-east-1',
-      credentials: AwsClientCredentials(
-          accessKey: 'AKIA6OSE4M4SAWHPS5GV',
-          secretKey: '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'));
+      region: Platform.environment.containsKey('AWS_REGION')
+          ? Platform.environment['AWS_REGION']!
+          : 'sa-east-1',
+      credentials: Platform.environment.containsKey('ENV')
+          ? AwsClientCredentials(
+              accessKey: Platform.environment['accessKey'] ?? '',
+              secretKey: Platform.environment['secretKey'] ?? '')
+          : null);
   Future<List<ActivityModel>> getAll() async {
     var output = await dynamoClient.scan(
         tableName: Platform.environment['TABLE_NAME'] ?? 'Activity_Teste');
@@ -44,8 +38,8 @@ class ActivityRepository {
           tableName: Platform.environment['TABLE_NAME'] ?? 'Activity_Teste',
           key: {'id': AttributeValue(s: value.id)},
           updateExpression: value.updateExpression(),
-          expressionAttributeValues: value.expressionAttr(),
           expressionAttributeNames: value.expressionAttrNames(),
+          expressionAttributeValues: value.expressionAttr(),
           returnValues: ReturnValue.allNew);
       if (output.attributes == null) {
         return null;
@@ -65,6 +59,43 @@ class ActivityRepository {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<ActivityModel?> get(String id) async {
+    try {
+      var output = await dynamoClient.getItem(
+          tableName: Platform.environment['TABLE_NAME'] ?? 'Activity_Teste',
+          key: {'id': AttributeValue(s: id)});
+      if (output.item == null) {
+        return null;
+      }
+      return ActivityModel.fromOutput(output.item!);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<ActivityModel?> saveEnrollUser(User user, ActivityModel value) async {
+    try {
+      var output = await dynamoClient.updateItem(
+          tableName: Platform.environment['TABLE_NAME'] ?? 'Activity_Teste',
+          key: {'id': AttributeValue(s: value.id)},
+          updateExpression: 'SET #schedule = :val',
+          expressionAttributeNames: {"#schedule": "schedule"},
+          expressionAttributeValues: {
+            ":val": AttributeValue(
+                l: value.schedule
+                    .map((e) => AttributeValue(m: e.toAttr()))
+                    .toList())
+          },
+          returnValues: ReturnValue.allNew);
+      if (output.attributes == null) {
+        return null;
+      }
+      return ActivityModel.fromOutput(output.attributes!);
+    } catch (e) {
+      return null;
     }
   }
 }

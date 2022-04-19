@@ -3,19 +3,20 @@ import 'dart:convert';
 class HttpRequest {
   final String rawPath;
   final Map<String, dynamic>? queryStringParameters;
+  final Map<String, dynamic>? headers;
   final Map<String, dynamic>? body;
   final String httpMethod;
 
-  HttpRequest(
-      this.rawPath, this.queryStringParameters, this.body, this.httpMethod);
+  HttpRequest(this.rawPath, this.queryStringParameters, this.body,
+      this.httpMethod, this.headers);
 
   factory HttpRequest.fromJson(Map<String, dynamic> json) {
     return HttpRequest(
-      json['rawPath'],
-      json['queryStringParameters'],
-      json['body'] != null ? jsonDecode(json['body']) : null,
-      json['requestContext']['http']['method'],
-    );
+        json['rawPath'],
+        json['queryStringParameters'],
+        json['body'] != null ? jsonDecode(json['body']) : null,
+        json['requestContext']['http']['method'],
+        json['headers']);
   }
 }
 

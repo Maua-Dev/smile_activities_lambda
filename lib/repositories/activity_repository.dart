@@ -51,26 +51,6 @@ class ActivityRepository {
     }
   }
 
-  Future<Schedule?> updateSchedules(
-      Schedule value, int index, String activityId) async {
-    try {
-      var output = await dynamoClient.updateItem(
-          tableName: Platform.environment['TABLE_NAME'] ?? 'Activity_Teste',
-          key: {'id': AttributeValue(s: activityId)},
-          updateExpression: value.updateExpression(index),
-          expressionAttributeNames: value.expressionAttrNames(),
-          expressionAttributeValues: value.expressionAttr(),
-          returnValues: ReturnValue.allNew);
-      print('sch: ${output.attributes}');
-      if (output.attributes == null) {
-        return null;
-      }
-      return Schedule.fromOutput(output.attributes!);
-    } catch (e) {
-      return null;
-    }
-  }
-
   Future<bool> delete(String id) async {
     try {
       await dynamoClient.deleteItem(
@@ -97,20 +77,18 @@ class ActivityRepository {
     }
   }
 
-  Future<ActivityModel?> saveEnrollUser(User user, String idActivity,
-      int indexSchedule, List<String> enrolledUsers) async {
+  Future<ActivityModel?> saveEnrollUser(User user, ActivityModel value) async {
     try {
       var output = await dynamoClient.updateItem(
           tableName: Platform.environment['TABLE_NAME'] ?? 'Activity_Teste',
-          key: {'id': AttributeValue(s: idActivity)},
-          updateExpression: 'SET #sch[$indexSchedule].#enroll = :val',
-          expressionAttributeNames: {
-            "#sch": "schedule",
-            "#enroll": "enrolledUsers"
-          },
+          key: {'id': AttributeValue(s: value.id)},
+          updateExpression: 'SET #schedule = :val',
+          expressionAttributeNames: {"#schedule": "schedule"},
           expressionAttributeValues: {
             ":val": AttributeValue(
-                l: enrolledUsers.map((e) => AttributeValue(s: e)).toList())
+                l: value.schedule
+                    .map((e) => AttributeValue(m: e.toAttrEnroll()))
+                    .toList())
           },
           returnValues: ReturnValue.allNew);
       if (output.attributes == null) {

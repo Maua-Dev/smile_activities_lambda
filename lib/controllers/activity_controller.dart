@@ -1,3 +1,5 @@
+import 'package:smile_activities_lambda/model/schedule.dart';
+import 'package:smile_activities_lambda/utils/errors.dart';
 import 'package:uuid/uuid.dart';
 import '../model/user.dart';
 import '../model/activity.dart';
@@ -40,6 +42,17 @@ class ActivityController {
     }
     req.body!.addAll(req.queryStringParameters!);
     var activity = ActivityModel.fromJson(req.body!);
+    var data = await _activityRepository.get(activity.id);
+    if (data == null) {
+      return HttpResponse(null, statusCode: 400);
+    }
+    activity.schedule.forEach((element) {
+      data.schedule.forEach((sch) {
+        if (element.date == sch.date) {
+          element.enrolledUsers.addAll(sch.enrolledUsers);
+        }
+      });
+    });
     var res = await _activityRepository.update(activity);
     if (res == null) {
       return HttpResponse(null, statusCode: 400);

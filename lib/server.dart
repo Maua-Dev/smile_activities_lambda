@@ -22,7 +22,7 @@ void main() async {
   Future<Map<String, dynamic>> handlerRouter(HttpRequest req) async {
     const defaultPath = '/activity';
     switch (req.rawPath.toLowerCase()) {
-      case ('$defaultPath/getall'):
+      case ('$defaultPath/getall'):      
         try {
           var res = await _controller.getAll(req);
           return res.toJson();
@@ -30,6 +30,10 @@ void main() async {
           throw InternalServerError(e.toString());
         }
       case ('$defaultPath'):
+        var user = await jwtCheck(req);
+        if(user.isUser){
+          throw AuthenticationError();
+        }
         try {
           if (req.httpMethod == 'PUT') {
             var res = await _controller.update(req);

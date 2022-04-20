@@ -1,3 +1,4 @@
+import 'package:smile_activities_lambda/utils/errors.dart';
 import 'package:uuid/uuid.dart';
 import '../model/user.dart';
 import '../model/activity.dart';
@@ -42,7 +43,12 @@ class ActivityController {
     var activity = ActivityModel.fromJson(req.body!);
     var res = await _activityRepository.update(activity);
     activity.schedule.asMap().forEach((index, element) async {
-      await _activityRepository.updateSchedules(element, index, activity.id);
+      var sch = await _activityRepository.updateSchedules(
+          element, index, activity.id);
+      if (sch == null) {
+        throw InternalServerError('schedule not save');
+      }
+      element = sch;
     });
     if (res == null) {
       return HttpResponse(null, statusCode: 400);

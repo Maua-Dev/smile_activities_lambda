@@ -3,7 +3,6 @@ import 'package:aws_dynamodb_api/dynamodb-2012-08-10.dart';
 import 'package:smile_activities_lambda/model/schedule.dart';
 import '../model/activity.dart';
 import '../model/user.dart';
-import '../utils/errors.dart' as err;
 
 class ActivityRepository {
   final dynamoClient = DynamoDB(
@@ -52,18 +51,22 @@ class ActivityRepository {
     }
   }
 
-  Future<void> updateSchedules(
+  Future<Schedule?> updateSchedules(
       Schedule value, int index, String activityId) async {
     try {
-      await dynamoClient.updateItem(
+      var output = await dynamoClient.updateItem(
           tableName: Platform.environment['TABLE_NAME'] ?? 'Activity_Teste',
           key: {'id': AttributeValue(s: activityId)},
           updateExpression: value.updateExpression(),
           expressionAttributeNames: value.expressionAttrNames(index),
           expressionAttributeValues: value.expressionAttr(),
-          returnValues: ReturnValue.none);
+          returnValues: ReturnValue.allNew);
+      if (output.attributes == null) {
+        return null;
+      }
+      return Schedule.fromOutput(output.attributes!);
     } catch (e) {
-      throw err.InternalServerError(e.toString());
+      return null;
     }
   }
 

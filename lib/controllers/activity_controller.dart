@@ -41,6 +41,9 @@ class ActivityController {
     req.body!.addAll(req.queryStringParameters!);
     var activity = ActivityModel.fromJson(req.body!);
     var res = await _activityRepository.update(activity);
+    activity.schedule.asMap().forEach((index, element) async {
+      await _activityRepository.updateSchedules(element, index, activity.id);
+    });
     if (res == null) {
       return HttpResponse(null, statusCode: 400);
     }

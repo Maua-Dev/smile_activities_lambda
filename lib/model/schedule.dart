@@ -77,4 +77,37 @@ class Schedule {
       'acceptSubscription': acceptSubscription
     };
   }
+
+  String updateExpression() {
+    return '''SET         
+ #field1 = :val1,
+ #field2 = :val2,
+ #field3 = :val3,
+ #field4 = :val4,
+ #field5 = :val5,
+ #field6 = :val6
+    ''';
+  }
+
+  Map<String, AttributeValue> expressionAttr() {
+    return {
+      ':val1': AttributeValue(n: '$date'),
+      ':val2': AttributeValue(n: '$totalParticipants'),
+      ':val3': AttributeValue(s: '$duration'),
+      ':val4': AttributeValue(s: location),
+      ':val5': AttributeValue(s: link),
+      ':val6': AttributeValue(boolValue: acceptSubscription),
+    };
+  }
+
+  Map<String, String> expressionAttrNames(int index) {
+    return {
+      '#field1': 'schedule[$index].date',
+      '#field2': 'schedule[$index].totalParticipants',
+      '#field3': 'schedule[$index].duration',
+      '#field4': 'schedule[$index].location',
+      '#field5': 'schedule[$index].link',
+      '#field6': 'schedule[$index].acceptSubscription'
+    };
+  }
 }

@@ -103,9 +103,10 @@ class ActivityRepository {
       var output = await dynamoClient.updateItem(
           tableName: Platform.environment['TABLE_NAME'] ?? 'Activity_Teste',
           key: {'id': AttributeValue(s: idActivity)},
-          updateExpression: 'SET #enroll = :val',
+          updateExpression: 'SET #sch[$indexSchedule].#enroll = :val',
           expressionAttributeNames: {
-            "#enroll": "schedule[$indexSchedule].enrolledUsers"
+            "#sch": "schedule",
+            "#enroll": "enrolledUsers"
           },
           expressionAttributeValues: {
             ":val": AttributeValue(

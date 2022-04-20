@@ -122,12 +122,20 @@ class ActivityController {
     var acts = await _activityRepository.getAll();
     var list = [];
     print('acts: ${acts.length}');
+    var sch = <Schedule>[];
     acts.forEach((element) {
       element.schedule.forEach((el) {
         if (el.enrolledUsers.contains(user.id)) {
-          list.add(element);
+          sch.add(el);
         }
       });
+      if (sch.length > 0) {
+        var act = element;
+        act.schedule.clear();
+        act.schedule.addAll(sch);
+        list.add(act);
+        sch.clear();
+      }
     });
     return HttpResponse(list.map((e) => e.toJson()).toList(), statusCode: 200);
   }

@@ -74,7 +74,8 @@ class ActivityModel {
  #field2 = :val2,
  #field3 = :val3,
  #field4 = :val4,
- #field5 = :val5
+ #field5 = :val5,
+ #field6 = :val6
     ''';
   }
 
@@ -86,6 +87,8 @@ class ActivityModel {
       ':val4': AttributeValue(s: type),
       ':val5': AttributeValue(
           l: speakers.map((e) => AttributeValue(m: e.toAttr())).toList()),
+      ':val6': AttributeValue(
+          l: schedule.map((e) => AttributeValue(m: e.toAttrEnroll())).toList()),
     };
   }
 
@@ -95,7 +98,8 @@ class ActivityModel {
       '#field2': 'description',
       '#field3': 'title',
       '#field4': 'type',
-      '#field5': 'speakers'
+      '#field5': 'speakers',
+      '#field6': 'schedule'
     };
   }
 }

@@ -57,10 +57,11 @@ class ActivityRepository {
       var output = await dynamoClient.updateItem(
           tableName: Platform.environment['TABLE_NAME'] ?? 'Activity_Teste',
           key: {'id': AttributeValue(s: activityId)},
-          updateExpression: value.updateExpression(),
-          expressionAttributeNames: value.expressionAttrNames(index),
+          updateExpression: value.updateExpression(index),
+          expressionAttributeNames: value.expressionAttrNames(),
           expressionAttributeValues: value.expressionAttr(),
           returnValues: ReturnValue.allNew);
+      print('sch: ${output.attributes}');
       if (output.attributes == null) {
         return null;
       }

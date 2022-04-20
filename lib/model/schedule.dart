@@ -78,14 +78,14 @@ class Schedule {
     };
   }
 
-  String updateExpression() {
+  String updateExpression(int index) {
     return '''SET         
- #field1 = :val1,
- #field2 = :val2,
- #field3 = :val3,
- #field4 = :val4,
- #field5 = :val5,
- #field6 = :val6
+ #sch[$index].#field1 = :val1,
+ #sch[$index].#field2 = :val2,
+ #sch[$index].#field3 = :val3,
+ #sch[$index].#field4 = :val4,
+ #sch[$index].#field5 = :val5,
+ #sch[$index].#field6 = :val6
     ''';
   }
 
@@ -100,14 +100,15 @@ class Schedule {
     };
   }
 
-  Map<String, String> expressionAttrNames(int index) {
+  Map<String, String> expressionAttrNames() {
     return {
-      '#field1': 'schedule[$index].date',
-      '#field2': 'schedule[$index].totalParticipants',
-      '#field3': 'schedule[$index].duration',
-      '#field4': 'schedule[$index].location',
-      '#field5': 'schedule[$index].link',
-      '#field6': 'schedule[$index].acceptSubscription'
+      "#sch": 'schedule',
+      '#field1': 'date',
+      '#field2': 'totalParticipants',
+      '#field3': 'duration',
+      '#field4': 'location',
+      '#field5': 'link',
+      '#field6': 'acceptSubscription'
     };
   }
 }

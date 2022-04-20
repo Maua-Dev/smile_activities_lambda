@@ -47,6 +47,7 @@ class ActivityController {
     await Future.forEach<Schedule>(activity.schedule, (element) async {
       var sch = await _activityRepository.updateSchedules(
           element, index, activity.id);
+
       if (sch == null) {
         throw InternalServerError('schedule not save');
       }

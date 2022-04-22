@@ -137,6 +137,9 @@ class ActivityController {
         sch.clear();
       }
     });
+    list.sort((a, b) => a.schedule.length > 0 && b.schedule.length > 0
+        ? a.schedule.first.date.compareTo(b.schedule.first.date)
+        : 0);
     return HttpResponse(list.map((e) => e.toJson()).toList(), statusCode: 200);
   }
 }

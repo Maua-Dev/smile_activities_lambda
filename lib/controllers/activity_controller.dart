@@ -1,5 +1,4 @@
 import 'package:smile_activities_lambda/model/schedule.dart';
-import 'package:smile_activities_lambda/utils/errors.dart';
 import 'package:uuid/uuid.dart';
 import '../model/user.dart';
 import '../model/activity.dart';
@@ -12,7 +11,7 @@ class ActivityController {
     var res = await _activityRepository.getAll();
     res.sort((a, b) => a.schedule.length > 0 && b.schedule.length > 0
         ? a.schedule.first.date.compareTo(b.schedule.first.date)
-        : 0);
+        : a.activityCode.compareTo(b.activityCode));
 
     return HttpResponse(res.map((e) => e.toJson()).toList(), statusCode: 200);
   }

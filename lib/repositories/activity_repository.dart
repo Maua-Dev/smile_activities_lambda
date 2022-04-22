@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 import 'package:aws_dynamodb_api/dynamodb-2012-08-10.dart';
-import 'package:smile_activities_lambda/model/schedule.dart';
 import '../model/activity.dart';
 import '../model/user.dart';
 

@@ -22,30 +22,39 @@ void main() async {
   Future<Map<String, dynamic>> handlerRouter(HttpRequest req) async {
     const defaultPath = '/activity';
     switch (req.rawPath.toLowerCase()) {
-      case ('$defaultPath/getall'):
+      case ('$defaultPath/getall'):      
         try {
           var res = await _controller.getAll(req);
           return res.toJson();
         } catch (e) {
-          throw InternalServerError();
+          throw InternalServerError(e.toString());
         }
       case ('$defaultPath'):
-        if (req.httpMethod == 'PUT') {
-          var res = await _controller.update(req);
-          return res.toJson();
-        } else if (req.httpMethod == 'DELETE') {
-          var res = await _controller.delete(req);
-          return res.toJson();
+        var user = await jwtCheck(req);
+        if(user.isUser){
+          throw AuthenticationError();
         }
-        var res = await _controller.create(req);
-        return res.toJson();
+        try {
+          if (req.httpMethod == 'PUT') {
+            var res = await _controller.update(req);
+            return res.toJson();
+          } else if (req.httpMethod == 'DELETE') {
+            var res = await _controller.delete(req);
+            return res.toJson();
+          }
+          var res = await _controller.create(req);
+          return res.toJson();
+        } catch (e) {
+          throw InternalServerError(e.toString());
+        }
+
       case ('$defaultPath/enroll'):
         var user = await jwtCheck(req);
         try {
           var res = await _controller.enrollUser(req, user);
           return res.toJson();
         } catch (e) {
-          throw InternalServerError();
+          throw InternalServerError(e.toString());
         }
       case ('$defaultPath/unenroll'):
         var user = await jwtCheck(req);
@@ -53,7 +62,7 @@ void main() async {
           var res = await _controller.unEnrollUser(req, user);
           return res.toJson();
         } catch (e) {
-          throw InternalServerError();
+          throw InternalServerError(e.toString());
         }
       case ('$defaultPath/userisenrolled'):
         var user = await jwtCheck(req);
@@ -61,7 +70,7 @@ void main() async {
           var res = await _controller.userEnrolledActivities(req, user);
           return res.toJson();
         } catch (e) {
-          throw InternalServerError();
+          throw InternalServerError(e.toString());
         }
       default:
         return HttpResponse(null, statusCode: 404).toJson();
@@ -73,11 +82,11 @@ void main() async {
     try {
       return await handlerRouter(event);
     } on AuthenticationError catch (e) {
-      return HttpResponse(null, statusCode: 401).toJson();
+      return HttpResponse(e.message, statusCode: 401).toJson();
     } on InternalServerError catch (e) {
-      return HttpResponse(null, statusCode: 500).toJson();
+      return HttpResponse(e.message, statusCode: 500).toJson();
     } catch (e) {
-      return HttpResponse(null, statusCode: 500).toJson();
+      return HttpResponse(e.toString(), statusCode: 500).toJson();
     }
   };
   Runtime()

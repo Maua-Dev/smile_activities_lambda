@@ -42,11 +42,22 @@ class Schedule {
       'date': AttributeValue(n: '$date'),
       'totalParticipants': AttributeValue(n: '$totalParticipants'),
       'duration': AttributeValue(n: '$duration'),
-      'enrolledUsers': AttributeValue(
-          l: enrolledUsers.map((e) => AttributeValue(s: e)).toList()),
       'location': AttributeValue(s: location),
       'link': AttributeValue(s: link),
       'acceptSubscription': AttributeValue(boolValue: acceptSubscription)
+    };
+  }
+
+  Map<String, AttributeValue> toAttrEnroll() {
+    return {
+      'date': AttributeValue(n: '$date'),
+      'totalParticipants': AttributeValue(n: '$totalParticipants'),
+      'duration': AttributeValue(n: '$duration'),
+      'location': AttributeValue(s: location),
+      'link': AttributeValue(s: link),
+      'acceptSubscription': AttributeValue(boolValue: acceptSubscription),
+      'enrolledUsers': AttributeValue(
+          l: enrolledUsers.map((e) => AttributeValue(s: e)).toList()),
     };
   }
 
@@ -70,6 +81,40 @@ class Schedule {
       'location': location,
       'link': link,
       'acceptSubscription': acceptSubscription
+    };
+  }
+
+  String updateExpression(int index) {
+    return '''SET         
+ #sch[$index].#field1 = :val1,
+ #sch[$index].#field2 = :val2,
+ #sch[$index].#field3 = :val3,
+ #sch[$index].#field4 = :val4,
+ #sch[$index].#field5 = :val5,
+ #sch[$index].#field6 = :val6
+    ''';
+  }
+
+  Map<String, AttributeValue> expressionAttr() {
+    return {
+      ':val1': AttributeValue(n: '$date'),
+      ':val2': AttributeValue(n: '$totalParticipants'),
+      ':val3': AttributeValue(s: '$duration'),
+      ':val4': AttributeValue(s: location),
+      ':val5': AttributeValue(s: link),
+      ':val6': AttributeValue(boolValue: acceptSubscription),
+    };
+  }
+
+  Map<String, String> expressionAttrNames() {
+    return {
+      "#sch": 'schedule',
+      '#field1': 'date',
+      '#field2': 'totalParticipants',
+      '#field3': 'duration',
+      '#field4': 'location',
+      '#field5': 'link',
+      '#field6': 'acceptSubscription'
     };
   }
 }

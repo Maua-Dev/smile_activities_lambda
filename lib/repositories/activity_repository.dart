@@ -86,7 +86,7 @@ class ActivityRepository {
           expressionAttributeValues: {
             ":val": AttributeValue(
                 l: value.schedule
-                    .map((e) => AttributeValue(m: e.toAttr()))
+                    .map((e) => AttributeValue(m: e.toAttrEnroll()))
                     .toList())
           },
           returnValues: ReturnValue.allNew);

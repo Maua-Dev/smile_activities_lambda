@@ -1,3 +1,4 @@
+import 'package:smile_activities_lambda/model/schedule.dart';
 import 'package:uuid/uuid.dart';
 import '../model/user.dart';
 import '../model/activity.dart';
@@ -40,6 +41,17 @@ class ActivityController {
     }
     req.body!.addAll(req.queryStringParameters!);
     var activity = ActivityModel.fromJson(req.body!);
+    var data = await _activityRepository.get(activity.id);
+    if (data == null) {
+      return HttpResponse(null, statusCode: 400);
+    }
+    activity.schedule.forEach((element) {
+      data.schedule.forEach((sch) {
+        if (element.date == sch.date) {
+          element.enrolledUsers.addAll(sch.enrolledUsers);
+        }
+      });
+    });
     var res = await _activityRepository.update(activity);
     if (res == null) {
       return HttpResponse(null, statusCode: 400);
@@ -109,13 +121,24 @@ class ActivityController {
     var acts = await _activityRepository.getAll();
     var list = [];
     print('acts: ${acts.length}');
+    var sch = <Schedule>[];
     acts.forEach((element) {
       element.schedule.forEach((el) {
         if (el.enrolledUsers.contains(user.id)) {
-          list.add(element);
+          sch.add(el);
         }
       });
+      if (sch.length > 0) {
+        var act = element;
+        act.schedule.clear();
+        act.schedule.addAll(sch);
+        list.add(act);
+        sch.clear();
+      }
     });
+    list.sort((a, b) => a.schedule.length > 0 && b.schedule.length > 0
+        ? a.schedule.first.date.compareTo(b.schedule.first.date)
+        : 0);
     return HttpResponse(list.map((e) => e.toJson()).toList(), statusCode: 200);
   }
 }

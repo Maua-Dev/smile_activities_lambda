@@ -1,5 +1,4 @@
 import 'package:smile_activities_lambda/model/schedule.dart';
-import 'package:smile_activities_lambda/utils/errors.dart';
 import 'package:uuid/uuid.dart';
 import '../model/user.dart';
 import '../model/activity.dart';

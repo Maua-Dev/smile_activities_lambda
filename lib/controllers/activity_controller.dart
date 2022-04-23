@@ -10,14 +10,10 @@ class ActivityController {
   Future<HttpResponse> getAll(HttpRequest req) async {
     var res = await _activityRepository.getAll();
     res.sort((a, b) {
-      if (a.schedule.length > 0 && b.schedule.length > 0) {
-        return 0;
-      }
-      var cmp = a.schedule.first.date.compareTo(b.schedule.first.date);
-      if (cmp == 0) {
+      if (a.schedule.first.date == b.schedule.first.date) {
         return a.activityCode.compareTo(b.activityCode);
       }
-      return cmp;
+      return a.schedule.first.date.compareTo(b.schedule.first.date);
     });
     return HttpResponse(res.map((e) => e.toJson()).toList(), statusCode: 200);
   }

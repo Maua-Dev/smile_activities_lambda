@@ -187,7 +187,8 @@ class ActivityController {
       var u = users[element['userId']];
       var ent = <String, String>{
         'cpf': u!['cpfRne'] as String,
-        'nome': u['name'] as String
+        'nome': u['name'] as String,
+        'email': u['email'] as String
       };
       element.addAll(ent);
       element.remove('userId');

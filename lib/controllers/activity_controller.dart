@@ -1,12 +1,18 @@
+import 'package:intl/intl.dart';
 import 'package:smile_activities_lambda/model/schedule.dart';
+import 'package:smile_activities_lambda/repositories/users_repository.dart';
+import 'package:smile_activities_lambda/services/csv_converter.dart';
+import 'package:smile_activities_lambda/services/s3_upload.dart';
 import 'package:uuid/uuid.dart';
 import '../model/user.dart';
 import '../model/activity.dart';
 import '../repositories/activity_repository.dart';
+import '../utils/errors.dart';
 import '../utils/http.dart';
 
 class ActivityController {
   final _activityRepository = ActivityRepository();
+  final _usersRepository = UsersRepository();
   Future<HttpResponse> getAll(HttpRequest req) async {
     var res = await _activityRepository.getAll();
     res.sort((a, b) {
@@ -142,5 +148,55 @@ class ActivityController {
         ? a.schedule.first.date.compareTo(b.schedule.first.date)
         : 0);
     return HttpResponse(list.map((e) => e.toJson()).toList(), statusCode: 200);
+  }
+
+  Future<HttpResponse> getUsersActivities(HttpRequest req) async {
+    if (!req.headers!.containsKey('authorization')) {
+      throw AuthenticationError();
+    }
+    var acts = await _activityRepository.getAll();
+    acts.sort((a, b) {
+      if (a.schedule.first.date == b.schedule.first.date) {
+        return a.activityCode.compareTo(b.activityCode);
+      }
+      return a.schedule.first.date.compareTo(b.schedule.first.date);
+    });
+
+    var actSubs = <Map<String, String>>[];
+    acts.forEach((element) {
+      element.schedule.forEach((e) {
+        var subs = e.enrolledUsers.map((u) {
+          return {
+            'dia': DateFormat('dd/MM')
+                .format(DateTime.fromMillisecondsSinceEpoch(e.date)),
+            'codigoAtividade': element.activityCode,
+            'userId': u
+          };
+        }).toList();
+        actSubs.addAll(subs);
+      });
+    });
+    var users = await _usersRepository.listUsers(
+        actSubs.map((e) => e['userId']!).toSet().toList(),
+        req.headers!['authorization']);
+    if (users == null) {
+      return HttpResponse('Users return null', statusCode: 500);
+    }
+
+    actSubs.forEach((element) {
+      var u = users[element['userId']];
+      var ent = <String, String>{
+        'cpf': u!['cpfRne'] as String,
+        'nome': u['name'] as String
+      };
+      element.addAll(ent);
+      element.remove('userId');
+    });
+    var csv = CsvConverter.listToCsv(actSubs);
+    var res = await S3Upload.upload(csvRows: csv);
+    if (res == null) {
+      throw InternalServerError('Upload S3 error');
+    }
+    return HttpResponse(res, statusCode: 200);
   }
 }

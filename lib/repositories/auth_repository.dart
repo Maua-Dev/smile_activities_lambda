@@ -1,13 +1,10 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
+import 'package:smile_activities_lambda/env.dart';
 import '../model/user.dart';
 
 class AuthRepository {
   final _dio = Dio(BaseOptions(
-      baseUrl: Platform.environment['COGNITO_AWS']!,
-      connectTimeout: 5000,
-      receiveTimeout: 3000));
+      baseUrl: Env.cognitoUrl, connectTimeout: 5000, receiveTimeout: 3000));
 
   Future<User?> checkToken(String token) async {
     try {

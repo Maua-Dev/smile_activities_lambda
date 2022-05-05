@@ -75,13 +75,13 @@ void main() async {
       case ('$defaultPath/download'):
         var user = await jwtCheck(req);
         if (user.accessLevel != 'ADMIN') {
-          HttpResponse('ONLY ADMIN', statusCode: 403).toJson();
+          return HttpResponse('ONLY ADMIN', statusCode: 403).toJson();
         }
         try {
           var res = await _controller.getUsersActivities(req);
           return res.toJson();
         } catch (e) {
-          throw InternalServerError(e.toString());
+          throw InternalServerError('Error');
         }
       default:
         return HttpResponse(null, statusCode: 404).toJson();

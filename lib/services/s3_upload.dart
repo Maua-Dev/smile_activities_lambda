@@ -5,9 +5,7 @@ import 'dart:io' show File, Platform;
 import 'package:smile_activities_lambda/env.dart';
 
 class S3Upload {
-  static final _service = S3(
-    region: Env.region,
-  );
+  static final _service = S3(region: Env.region, credentials: Env.credential);
   static Future<String?> upload({required String csvRows}) async {
     try {
       var csv = File('file.txt');

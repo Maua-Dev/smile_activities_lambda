@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'dart:io' show File, Platform;
 
 import 'package:smile_activities_lambda/env.dart';
+import 'package:smile_activities_lambda/utils/errors.dart';
 
 class S3Upload {
   static final _service = S3(region: Env.region, credentials: Env.credential);
@@ -18,7 +19,7 @@ class S3Upload {
       );
       return 'https://${Env.bucketName}.s3.${Env.region}.amazonaws.com/$fileName.csv';
     } catch (e) {
-      return null;
+      throw InternalServerError(e.toString());
     }
   }
 }

@@ -5,9 +5,12 @@ environment:
 dependencies:
   aws_lambda_dart_runtime: ^1.1.0
   aws_dynamodb_api: ^1.2.0
+  aws_s3_api: ^1.2.0  
   http_methods: ^1.1.0
   uuid: ^3.0.6
   dio: ^4.0.6
+  csv: ^5.0.1
 dev_dependencies:
+  dotenv:
   build_runner:
   test: ^1.16.8

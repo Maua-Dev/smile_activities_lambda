@@ -22,7 +22,7 @@ void main() async {
   Future<Map<String, dynamic>> handlerRouter(HttpRequest req) async {
     const defaultPath = '/activity';
     switch (req.rawPath.toLowerCase()) {
-      case ('$defaultPath/getall'):      
+      case ('$defaultPath/getall'):
         try {
           var res = await _controller.getAll(req);
           return res.toJson();
@@ -31,7 +31,7 @@ void main() async {
         }
       case ('$defaultPath'):
         var user = await jwtCheck(req);
-        if(user.isUser){
+        if (user.isUser) {
           throw AuthenticationError();
         }
         try {
@@ -72,6 +72,14 @@ void main() async {
         } catch (e) {
           throw InternalServerError(e.toString());
         }
+      case ('$defaultPath/download'):
+        var user = await jwtCheck(req);
+        if (user.accessLevel != 'ADMIN') {
+          return HttpResponse('ONLY ADMIN', statusCode: 403).toJson();
+        }
+        var res = await _controller.getUsersActivities(req);
+        return res.toJson();
+
       default:
         return HttpResponse(null, statusCode: 404).toJson();
     }

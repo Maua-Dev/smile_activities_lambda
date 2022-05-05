@@ -77,12 +77,9 @@ void main() async {
         if (user.accessLevel != 'ADMIN') {
           return HttpResponse('ONLY ADMIN', statusCode: 403).toJson();
         }
-        try {
-          var res = await _controller.getUsersActivities(req);
-          return res.toJson();
-        } catch (e) {
-          throw InternalServerError('Error');
-        }
+        var res = await _controller.getUsersActivities(req);
+        return res.toJson();
+
       default:
         return HttpResponse(null, statusCode: 404).toJson();
     }

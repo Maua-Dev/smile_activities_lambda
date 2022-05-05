@@ -1,4 +1,3 @@
-import 'dart:io' show Platform;
 import 'package:aws_dynamodb_api/dynamodb-2012-08-10.dart';
 import '../env.dart';
 import '../model/activity.dart';

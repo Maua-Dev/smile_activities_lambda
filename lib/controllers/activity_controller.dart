@@ -185,13 +185,15 @@ class ActivityController {
 
     actSubs.forEach((element) {
       var u = users[element['userId']];
-      var ent = <String, String>{
-        'cpf': u!['cpfRne'] as String,
-        'nome': u['name'] as String,
-        'email': u['email'] as String
-      };
-      element.addAll(ent);
-      element.remove('userId');
+      if (u['error'] == null) {
+        var ent = <String, String>{
+          'cpf': u!['cpfRne'] as String,
+          'nome': u['name'] as String,
+          'email': u['email'] as String
+        };
+        element.addAll(ent);
+        element.remove('userId');
+      }
     });
     var csv = CsvConverter.listToCsv(actSubs);
     var res = await S3Upload.upload(csvRows: csv);

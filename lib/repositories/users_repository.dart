@@ -3,7 +3,7 @@ import 'package:smile_activities_lambda/env.dart';
 
 class UsersRepository {
   final _dio = Dio(BaseOptions(
-      baseUrl: Env.cognitoUrl, connectTimeout: 5000, receiveTimeout: 3000));
+      baseUrl: Env.cognitoUrl, connectTimeout: 50000, receiveTimeout: 30000));
   Future<Map?> listUsers(List<String> users, String token) async {
     try {
       var res = await _dio.post('/listUsers',

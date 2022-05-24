@@ -186,13 +186,14 @@ class ActivityController {
     actSubs.forEach((element) {
       var u = users[element['userId']];
       if (u['error'] == null) {
+        var cert = u['certificateWithSocialName'] as bool?;
+
         var ent = <String, String>{
           'cpf': u!['cpfRne'] as String,
           'nome': u['name'] as String,
           'email': u['email'] as String,
           'socialName': (u['socialName'] as String?) ?? "",
-          'certificateWithSocialName':
-              "${u['certificateWithSocialName'] as bool}",
+          'certificateWithSocialName': cert?.toString() ?? "",
         };
         element.addAll(ent);
         element.remove('userId');

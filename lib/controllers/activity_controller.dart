@@ -190,7 +190,7 @@ class ActivityController {
           'cpf': u!['cpfRne'] as String,
           'nome': u['name'] as String,
           'email': u['email'] as String,
-          'socialName': u['socialName'] as String,
+          'socialName': (u['socialName'] as String?) ?? "",
           'certificateWithSocialName':
               "${u['certificateWithSocialName'] as bool}",
         };
